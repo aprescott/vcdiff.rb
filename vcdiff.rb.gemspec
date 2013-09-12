@@ -9,6 +9,7 @@ Gem::Specification.new do |gem|
 
   gem.files         = Dir["{lib/**/*,test/**/*,*.gemspec}"] + %w[rakefile LICENSE Gemfile README.md]
   gem.require_path  = "lib"
+  gem.license       = "MIT"
 
   [
     "bindata", "~> 1.6.0",
