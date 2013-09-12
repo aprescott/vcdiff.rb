@@ -1,6 +1,6 @@
 Gem::Specification.new do |gem|
   gem.name          = "vcdiff.rb"
-  gem.version       = "0.0.1"
+  gem.version       = "0.0.2"
   gem.authors       = ["Adam Prescott"]
   gem.email         = ["adam@aprescott.com"]
   gem.description   = "Pure-Ruby VCDIFF encoder/decoder."
