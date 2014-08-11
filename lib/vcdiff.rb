@@ -13,7 +13,7 @@ module VCDIFF
     attr_accessor :dictionary
 
     def initialize(dictionary)
-      @dictionary = File.read(dictionary)
+      @dictionary = File.read(dictionary, mode: "rb")
 
       @s_near = 4
       @s_same = 3
