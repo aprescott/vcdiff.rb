@@ -55,7 +55,7 @@ module VCDIFF
 
         source_window = @dictionary[position, length]
 
-        target_file << process_delta_encoding(source_window, next_window.delta_encoding)
+        target_file << process_delta_encoding(source_window, next_window)
       end
 
       target_file
@@ -66,7 +66,8 @@ module VCDIFF
     #
     # this corresponds to section (6) in RFC3284, which outlines
     # processing the instructions, data and addresses arrays.
-    def process_delta_encoding(source_window, delta_encoding)
+    def process_delta_encoding(source_window, window)
+      delta_encoding = window.delta_encoding
       # to_a is needed here to unwrap the BinData::Array, which doesn't
       # know about method calls like #shift
       instructions      = delta_encoding.instructions.to_a
@@ -159,7 +160,7 @@ module VCDIFF
           #         same[(m - (s_near+2))*256 + b]".
           #
 
-          here = target_window.length - 1
+          here = window.source_data_length + target_window.length
 
           case mode1
           when 0 # VCD_SELF
@@ -176,8 +177,6 @@ module VCDIFF
             raise ArgumentError, "invalid mode #{mode1}"
           end
 
-          target_window << source_window[addr, instruction_size_1]
-
           # now update the "near" and "same" caches.
           if @s_near > 0
             @near_cache[@next_slot] = addr
@@ -187,6 +186,34 @@ module VCDIFF
           if @s_same > 0
             @same_cache[addr % (@s_same * 256)] = addr
           end
+
+          # now copy appropriate data
+          if (addr + instruction_size_1) <= window.source_data_length
+            # copy all data from source segment
+            target_window << source_window[addr, instruction_size_1]
+          else
+            size = instruction_size_1
+            if addr < window.source_data_length
+              # copy some data from source segement
+              partial_copy_size = window.source_data_length - addr
+              target_window << source_window[addr, partial_copy_size]
+              addr += partial_copy_size
+              size -= partial_copy_size
+            end
+            addr -= window.source_data_length
+            # addr is now based at start of target window
+            target_bytes_decoded = target_window.length
+            while (size > (target_bytes_decoded - addr)) do
+              # recursive copy that extends into the yet-to-be-copied data
+              partial_copy_size = target_bytes_decoded - addr
+              target_window << target_window[addr, partial_copy_size]
+              addr += partial_copy_size
+              size -= partial_copy_size
+              target_bytes_decoded += partial_copy_size
+            end
+            target_window << target_window[addr, size]
+          end  
+          
         else
           raise ArgumentError, "Invalid file format, instruction of #{type1} (found at index #{index}) doesn't exist"
         end
