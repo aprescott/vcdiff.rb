@@ -1,4 +1,4 @@
-require "test_helper"
+require "spec_helper"
 
 describe VCDIFF::CodeTable do
   describe "DEFAULT_TABLE" do

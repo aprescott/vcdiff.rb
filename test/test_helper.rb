@@ -1,3 +1,0 @@
-require "tempfile"
-
-require "vcdiff"
