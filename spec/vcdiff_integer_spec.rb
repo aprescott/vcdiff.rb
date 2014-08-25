@@ -1,4 +1,4 @@
-require "test_helper"
+require "spec_helper"
 
 KNOWN_ENCODINGS = {
                     266478  => "100100001010000101101110",
@@ -20,9 +20,9 @@ describe VCDIFF::VCDIFFInt do
 
       i = VCDIFF::VCDIFFInt.read(packed)
 
-      i.snapshot.should == int
-      i.to_binary_s.should == packed
-      i.to_i.should == i.snapshot
+      expect(i.snapshot).to eq(int)
+      expect(i.to_binary_s).to eq(packed)
+      expect(i.to_i).to eq(i.snapshot)
     end
   end
 end

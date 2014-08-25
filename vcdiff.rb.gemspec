@@ -20,7 +20,7 @@ Gem::Specification.new do |gem|
 
   [
     "rake", "~> 10.0.0",
-    "rspec", "~> 2.5"
+    "rspec", "~> 3.0"
   ].each_slice(2) do |name, version|
     gem.add_runtime_dependency(name, version)
   end
